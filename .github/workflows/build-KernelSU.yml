@@ -1,7 +1,7 @@
 name: Build OnePlus 11 C15 Kernel
 on:
   workflow_dispatch:
-
+  
 jobs:
   build:
     name: Build Kernel by ${{ github.actor }}
@@ -11,15 +11,15 @@ jobs:
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
     steps:
-    - name: Set swap to 10G
-      uses: pierotofy/set-swap-space@master
-      with:
-        swap-size-gb: 10
+      - name: Set swap to 10G
+        uses: pierotofy/set-swap-space@maste
+        with: 
+          swap-size-gb: 10
 
-    - name: Install dependencies
+      - name: Install dependencies
         run: |
-        sudo apt update && sudo apt upgrade -y
-        sudo apt install -y python3 git curl
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install -y python3 git curl
 
       - name: Install repo tool
         run: |
@@ -38,58 +38,58 @@ jobs:
          sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
 
 
-    - name: Download Clang-aosp
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        mkdir clang-aosp
-        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master-kernel-build-2022/clang-r450784e.tar.gz
-        tar -C clang-aosp/ -zxvf clang-r450784e.tar.gz
+      - name: Download Clang-aosp
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace
+          mkdir clang-aosp
+          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master-kernel-build-2022/clang-r450784e.tar.gz
+          tar -C clang-aosp/ -zxvf clang-r450784e.tar.gz
 
-    - name: Setup KernelSU
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace/common
-        rm -rf KernelSU drivers/kernelsu
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-        KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
-        echo "UPLOADNAME=-KSU_$KSU_VERSION" >> $GITHUB_ENV
+      - name: Setup KernelSU
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace/common
+          rm -rf KernelSU drivers/kernelsu
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
+          echo "UPLOADNAME=-KSU_$KSU_VERSION" >> $GITHUB_ENV
 
-    - name: Build kernel
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        KERNEL_DIR=./common
-        OUT_DIR=../out
-        DEFCONFIG="gki_defconfig vendor/kalama_GKI.config vendor/oplus/kalama_GKI.config vendor/debugfs.config vendor/oplus/salami.config"
-        LTO=thin
-        export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/bin:$PATH
-        export CLANG_TRIPLE=aarch64-linux-gnu-
-        export ARCH=arm64
-        export SUBARCH=arm64
-        export HEADER_ARCH=arm64
-        TOOL_ARGS+=("ARCH=${ARCH}" "SUBARCH=${SUBARCH}" "HEADER_ARCH=${HEADER_ARCH}")
-        CC=clang CXX=clang++ && TOOL_ARGS+=("CC=${CC}"  "CXX=${CXX}")
-        LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf OBJSIZE=llvm-size STRIP=llvm-strip && TOOL_ARGS+=("LD=${LD}" "AR=${AR}" "NM=${NM}" "OBJCOPY=${OBJCOPY}" "OBJDUMP=${OBJDUMP}" "STRIP=${STRIP}")
-        LLVM=1 LLVM_IAS=1 && TOOL_ARGS+=("LLVM=${LLVM}" "LLVM_IAS=${LLVM_IAS}")
-        cd ${KERNEL_DIR}
-        THREAD=14
-        make -j"$THREAD" "${TOOL_ARGS[@]}" O=${OUT_DIR}  ${DEFCONFIG}
-        scripts/config --file ${OUT_DIR}/.config -e LTO_CLANG -d LTO_NONE -e LTO_CLANG_THIN -d LTO_CLANG_FULL -e THINLTO
-        THREAD=$(($(nproc --all) - 1))
-        make -j"$THREAD" O=${OUT_DIR} "${TOOL_ARGS[@]}"
+      - name: Build kernel
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace
+          KERNEL_DIR=./common
+          OUT_DIR=../out
+          DEFCONFIG="gki_defconfig vendor/kalama_GKI.config vendor/oplus/kalama_GKI.config vendor/debugfs.config vendor/oplus/salami.config"
+          LTO=thin
+          export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/bin:$PATH
+          export CLANG_TRIPLE=aarch64-linux-gnu-
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export HEADER_ARCH=arm64
+          TOOL_ARGS+=("ARCH=${ARCH}" "SUBARCH=${SUBARCH}" "HEADER_ARCH=${HEADER_ARCH}")
+          CC=clang CXX=clang++ && TOOL_ARGS+=("CC=${CC}"  "CXX=${CXX}")
+          LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf OBJSIZE=llvm-size STRIP=llvm-strip && TOOL_ARGS+=("LD=${LD}" "AR=${AR}" "NM=${NM}" "OBJCOPY=${OBJCOPY}" "OBJDUMP=${OBJDUMP}" "STRIP=${STRIP}")
+          LLVM=1 LLVM_IAS=1 && TOOL_ARGS+=("LLVM=${LLVM}" "LLVM_IAS=${LLVM_IAS}")
+          cd ${KERNEL_DIR}
+          THREAD=14
+          make -j"$THREAD" "${TOOL_ARGS[@]}" O=${OUT_DIR}  ${DEFCONFIG}
+          scripts/config --file ${OUT_DIR}/.config -e LTO_CLANG -d LTO_NONE -e LTO_CLANG_THIN -d LTO_CLANG_FULL -e THINLTO
+          THREAD=$(($(nproc --all) - 1))
+          make -j"$THREAD" O=${OUT_DIR} "${TOOL_ARGS[@]}"
 
-    - name: Make Anykernel3
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://github.com/Kernel-SU/AnyKernel3 --depth=1 AnyKernel3
-        cp out/arch/arm64/boot/Image AnyKernel3/
+      - name: Make Anykernel3
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace
+          git clone https://github.com/Kernel-SU/AnyKernel3 --depth=1 AnyKernel3
+          cp out/arch/arm64/boot/Image AnyKernel3/
 
-    - name: Upload Image
-      uses: actions/upload-artifact@v4
-      with:
-        name: Image
-        path: kernel_workspace/out/arch/arm64/boot/Image
+      - name: Upload Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: Image
+          path: kernel_workspace/out/arch/arm64/boot/Image
 
-    - name: Upload AnyKernel3
-      uses: actions/upload-artifact@v4
-      with:
-        name: AK3-OP11-A14${{ env.UPLOADNAME }}-${{ env.BUILD_TIME }}
-        path: kernel_workspace/AnyKernel3/*
+      - name: Upload AnyKernel3
+        uses: actions/upload-artifact@v4
+        with:
+          name: AK3-OP11-A14${{ env.UPLOADNAME }}-${{ env.BUILD_TIME }}
+          path: kernel_workspace/AnyKernel3/*
