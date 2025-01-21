@@ -16,20 +16,27 @@ jobs:
       with:
         swap-size-gb: 10
 
-    - name: Setup build kernel environment
-      run: |
-        echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%y%m%d")" >> $GITHUB_ENV
-        sudo apt-get update
-        sudo apt-get install git dwarves libelf-dev ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python2 python3
-        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+    - name: Install dependencies
+        run: |
+        sudo apt update && sudo apt upgrade -y
+        sudo apt install -y python3 git curl
 
-    - name: Download kernel source
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone --recursive https://github.com/LineageOS/android_kernel_oneplus_sm8550 -b lineage-21 common --depth=1
-        cd common/scripts
-        sed -i 's/ -dirty//g' setlocalversion
-        sed -i 's/ -g / -android13-8-g /g' setlocalversion
+      - name: Install repo tool
+        run: |
+         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/repo
+         chmod a+x ~/repo
+         sudo mv ~/repo /usr/local/bin/repo
+
+      - name: Initialize repo and sync
+        run: |
+         mkdir kernel_workspace && cd kernel_workspace
+         repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }} -m ${{ github.event.inputs.FEIL }}.xml --depth=1
+         repo sync
+         rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         sed -i 's/ -dirty//g' kernel_platform/common/scripts/setlocalversion
+         sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
+
 
     - name: Download Clang-aosp
       run: |
