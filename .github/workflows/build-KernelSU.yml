@@ -1,7 +1,7 @@
 name: Build Android 13 5.15 GKI Kernels
 
 on:
-  workflow_call:  # This allows this workflow to be called from another workflow
+  workflow_dispatch:  # This allows this workflow to be called from another workflow
   
 jobs:
   build-kernel-a13-5-15-kernelsu-susfs:
