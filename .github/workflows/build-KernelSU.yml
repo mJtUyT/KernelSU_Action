@@ -11,41 +11,8 @@ jobs:
         include:
           - android_version: "android13"
             kernel_version: "5.15"
-            sub_level: "94"
-            os_patch_level: "2023-05"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "123"
-            os_patch_level: "2023-11"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "137"
-            os_patch_level: "2024-01"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "144"
-            os_patch_level: "2024-03"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "148"
-            os_patch_level: "2024-05"
-          - android_version: "android13"
-            kernel_version: "5.15"
             sub_level: "149"
             os_patch_level: "2024-07"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "151"
-            os_patch_level: "2024-08"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "167"
-            os_patch_level: "2024-11"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "X"
-            os_patch_level: "lts"
-
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
@@ -125,7 +92,7 @@ jobs:
           # Initialize and sync kernel source
           echo "Initializing and syncing kernel source..."
           FORMATTED_BRANCH="${{ matrix.android_version }}-${{ matrix.kernel_version }}-${{ matrix.os_patch_level }}"
-          $REPO init --depth=1 --u https://android.googlesource.com/kernel/manifest -b common-${FORMATTED_BRANCH} --repo-rev=v2.16
+          $REPO init --depth=1 --u https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8550.git
           
           REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common ${FORMATTED_BRANCH})
           DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
