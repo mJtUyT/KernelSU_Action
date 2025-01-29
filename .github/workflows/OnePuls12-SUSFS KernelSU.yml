@@ -161,7 +161,7 @@ jobs:
           sed -i 's/check_defconfig//' ./common/build.config.gki
           sed -i '$s|echo "\$res"|echo "\$res-mJtUyT"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i 's/-dirty//' ./common/scripts/setlo
+          sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
           sed -i '/echo "LTO $LTO "/i export LTO=thin' ./oplus/build/oplus_setup.sh
           #sed -i 's/export RECOMPILE_KERNEL="1"/export RECOMPILE_KERNEL="0"/g' ./oplus/build/oplus_setup.sh
@@ -174,7 +174,6 @@ jobs:
          
           # Run perl command to modify UTS_VERSION
           perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Sat Apr 20 04:20:00 UTC 2024"}' ./common/scripts/mkcompile_h
-
       - name: Build the Kernel
         run: |
           echo "Changing to configuration directory: $CONFIG..."
