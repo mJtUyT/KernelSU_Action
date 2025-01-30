@@ -177,14 +177,6 @@ jobs:
           echo "Building the kernel..."
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
           ./kernel_platform/oplus/build/oplus_build_kernel.sh kalama gki
-
-      - name: Create Bootimgs Folder and Copy Images
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG"
-          
-          echo "Copying Image"
-          cp ./out/dist/Image ../AnyKernel3/Image
           
       - name: Create ZIP Files for Different Formats
         run: |
