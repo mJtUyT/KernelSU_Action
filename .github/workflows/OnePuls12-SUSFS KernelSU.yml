@@ -1,4 +1,4 @@
-name: Build OnePlus 12 Android 14 6.1 Kernel
+name: Build OnePlus 12 SUSFS KernelSU
 
 on:
   workflow_dispatch:
@@ -159,7 +159,7 @@ jobs:
           
           # Run sed commands for modifications
           sed -i 's/check_defconfig//' ./common/build.config.gki
-          sed -i '$s|echo "\$res"|echo "\$res-Wild+"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "\$res-mJtUyT"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
@@ -209,7 +209,7 @@ jobs:
           echo "Creating zip files for all formats..."
           cd ./AnyKernel3
           
-          ZIP_NAME="Anykernel3-OP12-A15-android14-6.1-KernelSU-SUSFS.zip"
+          ZIP_NAME="Anykernel3-OnePuls12-KernelSU-SUSFS.zip"
           echo "Creating zip file $ZIP_NAME..."
           zip -r "../$ZIP_NAME" ./*
           
