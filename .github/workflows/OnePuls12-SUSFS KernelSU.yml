@@ -196,14 +196,6 @@ jobs:
               sleep 10
           done
    
-      - name: Create Bootimgs Folder and Copy Images
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG"
-          
-          echo "Copying Image"
-          cp ./out/dist/Image ../AnyKernel3/Image
-          
       - name: Create ZIP Files for Different Formats
         run: |
           echo "Creating zip files for all formats..."
