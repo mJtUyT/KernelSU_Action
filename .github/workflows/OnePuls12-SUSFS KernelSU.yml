@@ -5,7 +5,7 @@ on:
   
 jobs:
   build-kernel-a14-6-1-kernelsu-susfs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Maximize build space
@@ -13,7 +13,7 @@ jobs:
         with:
           root-reserve-mb: 8192
           temp-reserve-mb: 2048
-          swap-size-mb: 8192
+          swap-size-mb: 16384
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -75,8 +75,8 @@ jobs:
           
           echo "Adding KernelSU..."
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
-          cd ./KernelSU-Next/kernel
-          sed -i 's/ccflags-y += -DKSU_VERSION=16/ccflags-y += -DKSU_VERSION=12321/' ./Makefile
+          #cd ./KernelSU-Next/kernel
+          #sed -i 's/ccflags-y += -DKSU_VERSION=16/ccflags-y += -DKSU_VERSION=12321/' ./Makefile
           
       - name: Apply SUSFS Patches
         run: |
@@ -163,14 +163,15 @@ jobs:
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
-          sed -i '/echo "LTO $LTO "/i export LTO=thin' ./oplus/build/oplus_setup.sh
+          #sed -i '/echo "LTO $LTO "/i export LTO=thin' ./oplus/build/oplus_setup.sh
           #sed -i 's/export RECOMPILE_KERNEL="1"/export RECOMPILE_KERNEL="0"/g' ./oplus/build/oplus_setup.sh
-          sed -i 's/export REPACK_IMG=true/export REPACK_IMG=false/g' ./oplus/build/oplus_setup.sh
+          #sed -i 's/export REPACK_IMG=true/export REPACK_IMG=false/g' ./oplus/build/oplus_setup.sh
           
-          sed -i 's/^#\(choose_lto_type \$3\)/\1/' ./oplus/build/oplus_setup.sh
+          #sed -i 's/^#\(choose_lto_type \$3\)/\1/' ./oplus/build/oplus_setup.sh
           #sed -i 's/^#\(choose_target_build \$4\)/\1/' ./oplus/build/oplus_setup.sh
-          sed -i 's/^#\(choose_repack_img \$5\)/\1/' ./oplus/build/oplus_setup.sh
+          #sed -i 's/^#\(choose_repack_img \$5\)/\1/' ./oplus/build/oplus_setup.sh
 
+          sed -i 's|^source kernel_platform/oplus/build/oplus_setup.sh \$1 \$2|source kernel_platform/oplus/build/oplus_setup.sh \$1 \$2 \$3 \$4 \$5|' ./oplus/build/oplus_build_kernel.sh
          
           # Run perl command to modify UTS_VERSION
           perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Sat Apr 20 04:20:00 UTC 2024"}' ./common/scripts/mkcompile_h
@@ -186,16 +187,16 @@ jobs:
           #git config --global user.name "TheWildJames"
           #git add *
           #git commit -s -a -m "getting rid of -dirty"
-          ./kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki &
-          CMD_PID=$!
-          while kill -0 $CMD_PID 2>/dev/null; do
-              echo "Memory Usage:"
-              free -h
-              echo "Disk Usage:"
-              df -h
-              sleep 10
-          done
+          ./kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki thin all none
    
+      - name: Create Bootimgs Folder and Copy Images
+        run: |
+          echo "Changing to configuration directory: $CONFIG..."
+          cd "$CONFIG"
+          
+          echo "Copying Image"
+          cp ./out/dist/Image ../AnyKernel3/Image
+          
       - name: Create ZIP Files for Different Formats
         run: |
           echo "Creating zip files for all formats..."
