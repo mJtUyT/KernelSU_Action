@@ -1,7 +1,7 @@
 name: Build OnePlus 11 SUSFS KernelSU
 
 on:
-  workflow_dispatch: # This allows this workflow to be called from another workflow
+  workflow_dispatch:
   
 jobs:
   build-kernel-a13-5-15-kernelsu-susfs:
@@ -22,7 +22,7 @@ jobs:
       - name: Set CONFIG Environment Variable
         run: |
           # Set CONFIG dynamically based on matrix values
-          CONFIG="op11"
+          CONFIG="OnePuls11"
           
           # Set CONFIG as an environment variable for future steps
           echo "CONFIG=$CONFIG" >> $GITHUB_ENV
