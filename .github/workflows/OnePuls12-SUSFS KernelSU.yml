@@ -161,12 +161,12 @@ jobs:
           sed -i 's/check_defconfig//' ./common/build.config.gki
           sed -i '$s|echo "\$res"|echo "\$res-mJtUyT"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i 's/-dirty//' ./common/scripts/setlocalversion
+          sed -i 's/-dirty$//' ./common/scripts/setlocalversion
           sed -i 's/\(6\.1\.75-android-8-\)[a-z0-9]*-dirty/\1SUSFS/' ./common/scripts/setlocalversion
 
-          #sed -i '/echo "LTO $LTO "/i export LTO=thin' ./oplus/build/oplus_setup.sh
-          #sed -i 's/export RECOMPILE_KERNEL="1"/export RECOMPILE_KERNEL="0"/g' ./oplus/build/oplus_setup.sh
-          #sed -i 's/export REPACK_IMG=true/export REPACK_IMG=false/g' ./oplus/build/oplus_setup.sh
+          sed -i '/echo "LTO $LTO "/i export LTO=thin' ./oplus/build/oplus_setup.sh
+          sed -i 's/export RECOMPILE_KERNEL="1"/export RECOMPILE_KERNEL="0"/g' ./oplus/build/oplus_setup.sh
+          sed -i 's/export REPACK_IMG=true/export REPACK_IMG=false/g' ./oplus/build/oplus_setup.sh
           
           #sed -i 's/^#\(choose_lto_type \$3\)/\1/' ./oplus/build/oplus_setup.sh
           #sed -i 's/^#\(choose_target_build \$4\)/\1/' ./oplus/build/oplus_setup.sh
@@ -184,10 +184,10 @@ jobs:
           
           echo "Building the kernel..."
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
-          #git config --global user.email "bins4us@hotmail.com"
-          #git config --global user.name "TheWildJames"
-          #git add *
-          #git commit -s -a -m "getting rid of -dirty"
+          git config --global user.email "bins4us@hotmail.com"
+          git config --global user.name "TheWildJames"
+          git add *
+          git commit -s -a -m "getting rid of -dirty"
           ./kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki thin all none
    
       - name: Create Bootimgs Folder and Copy Images
