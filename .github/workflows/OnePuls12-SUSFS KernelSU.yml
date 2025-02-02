@@ -65,7 +65,6 @@ jobs:
           repo --version
           repo --trace sync -c -j$(nproc --all) --no-tags --fail-fast
           
-      - name: Add KernelSU
       - name: Apply SUSFS Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
@@ -87,7 +86,6 @@ jobs:
           # Change to common directory and apply SUSFS patch
           cd ../common
           patch -p1 < 50_add_susfs_in_gki-${{ matrix.android_version }}-${{ matrix.kernel_version }}.patch
-
       - name: Apply Hide Stuff Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
