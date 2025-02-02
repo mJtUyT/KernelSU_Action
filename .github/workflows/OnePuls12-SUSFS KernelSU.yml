@@ -6,7 +6,7 @@ on:
 jobs:
   build-kernel-a14-6-1-kernelsu-susfs:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 150 #将超时时间设置为150分钟
 
     steps:
       - name: Maximize build space
