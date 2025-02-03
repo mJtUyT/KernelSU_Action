@@ -1,4 +1,4 @@
-name: Build OnePlus 11 SUSFS KernelSU
+name: Build OnePlus Ace2 SUSFS KernelSU
 
 on:
   workflow_dispatch:
