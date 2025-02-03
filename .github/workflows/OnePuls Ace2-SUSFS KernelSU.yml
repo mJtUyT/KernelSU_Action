@@ -160,7 +160,6 @@ jobs:
           # Run sed commands for modifications
           sed -i 's/check_defconfig//' ./common/build.config.gki
           sed -i '$s|echo "\$res"|echo "-android12-9-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
-          sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
           # Run perl command to modify UTS_VERSION
