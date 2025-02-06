@@ -182,6 +182,7 @@ jobs:
           cd "$CONFIG"
           
           echo "Building the kernel..."
+          pwd
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
           #git config --global user.email "bins4us@hotmail.com"
           #git config --global user.name "TheWildJames"
