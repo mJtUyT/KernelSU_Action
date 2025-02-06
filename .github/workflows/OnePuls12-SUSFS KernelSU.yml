@@ -23,7 +23,7 @@ jobs:
       - name: Set CONFIG Environment Variable
         run: |
           # Set CONFIG dynamically based on matrix values
-          CONFIG="op12"
+          CONFIG="OnePuls12"
           
           # Set CONFIG as an environment variable for future steps
           echo "CONFIG=$CONFIG" >> $GITHUB_ENV
@@ -199,11 +199,11 @@ jobs:
    
       - name: Create Bootimgs Folder and Copy Images
         run: |
-          echo "Changing to configuration directory: $CONFIG..."
+          echo "Changing to configuration directory: $CONFIG"
           cd "$CONFIG"
           
           echo "Copying Image"
-          cp ./out/dist/Image ../AnyKernel3/Image
+          cp /out/dist/Image ../AnyKernel3/Image
           
       - name: Create ZIP Files for Different Formats
         run: |
