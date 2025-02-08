@@ -203,18 +203,20 @@ jobs:
           echo "查看当前目录和文件"
           pwd
           ls -al
-          ls -al OnePuls12
           ls -al AnyKernel3
+          ls -al OnePuls12
           ls -al git-repo
-          ls -al kernel-patches
+          ls -al kernel_patches
           ls -al susfs4ksu
+          cd ..
+          ls -al
       - name: Create Bootimgs Folder and Copy Images
         run: |
           echo "Changing to configuration directory: $CONFIG"
           cd "$CONFIG"
           
           echo "Copying Image"
-          cp /out/dist/Image ../AnyKernel3/Image
+          cp ./out/dist/Image ../AnyKernel3/Image
           
       - name: Create ZIP Files for Different Formats
         run: |
