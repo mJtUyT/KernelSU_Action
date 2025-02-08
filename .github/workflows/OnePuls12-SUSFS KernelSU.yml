@@ -176,6 +176,13 @@ jobs:
           # Run perl command to modify UTS_VERSION
           perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Sat Apr 20 04:20:00 UTC 2024"}' ./common/scripts/mkcompile_h
 
+      - name: 查看目录
+        run : |
+          echo "查看kernel_platform下的目录"
+          cd Oneplus12
+          cd kernel_platform
+          ls -al
+          
       - name: Build the Kernel
         run: |
           echo "Changing to configuration directory: $CONFIG..."
