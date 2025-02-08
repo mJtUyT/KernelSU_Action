@@ -219,6 +219,9 @@ jobs:
           echo "查看android14-6.1的内容"
           cd android14-6.1
           ls -al
+          echo "查看msm-kernel目录下的内容"
+          cd msm-kernel
+          ls -al
         
       - name: Create Bootimgs Folder and Copy Images
         run: |
@@ -226,7 +229,7 @@ jobs:
           cd "$CONFIG"
           
           echo "Copying Image"
-          cp /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out/android14-6.1/Image /home/runner/work/build-KernelSU/build-KernelSU/AnyKernel3/Image
+          cp /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out/android14-6.1/msm-kernel/Image /home/runner/work/build-KernelSU/build-KernelSU/AnyKernel3/Image
           
       - name: Create ZIP Files for Different Formats
         run: |
