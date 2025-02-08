@@ -223,6 +223,9 @@ jobs:
           echo "查看out目录下的文件"
           cd /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out
           ls -al
+          echo "查看android14-6.1的内容"
+          cd android14-6.1
+        
       - name: Create Bootimgs Folder and Copy Images
         run: |
           echo "Changing to configuration directory: $CONFIG"
