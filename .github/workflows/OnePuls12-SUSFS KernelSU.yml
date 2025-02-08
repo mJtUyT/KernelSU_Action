@@ -226,7 +226,7 @@ jobs:
           cd "$CONFIG"
           
           echo "Copying Image"
-          cp ./out/dist/Image ../AnyKernel3/Image
+          cp /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out/android14-6.1/Image /home/runner/work/build-KernelSU/build-KernelSU/AnyKernel3/Image
           
       - name: Create ZIP Files for Different Formats
         run: |
