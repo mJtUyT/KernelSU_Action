@@ -23,7 +23,7 @@ jobs:
       - name: Set CONFIG Environment Variable
         run: |
           # Set CONFIG dynamically based on matrix values
-          CONFIG="OnePuls12"
+          CONFIG="OnePlus12"
           
           # Set CONFIG as an environment variable for future steps
           echo "CONFIG=$CONFIG" >> $GITHUB_ENV
@@ -182,7 +182,6 @@ jobs:
           cd "$CONFIG"
           
           echo "Building the kernel..."
-          pwd
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
           #git config --global user.email "bins4us@hotmail.com"
           #git config --global user.name "TheWildJames"
