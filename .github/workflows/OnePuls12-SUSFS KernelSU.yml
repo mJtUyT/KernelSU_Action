@@ -182,6 +182,10 @@ jobs:
           cd OnePlus12
           cd kernel_platform
           ls -al
+          echo "查看oplus/build目录下的文件"
+          cd oplus
+          cd build
+          ls -al
           
       - name: Build the Kernel
         run: |
