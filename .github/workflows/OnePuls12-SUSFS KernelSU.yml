@@ -202,13 +202,18 @@ jobs:
           echo "查看当前目录和文件"
           pwd
           ls -al
+          echo "查看AnyKernel3目录下文件"
           ls -al AnyKernel3
+          echo "查看OnePlus12目录下的文件"
           ls -al OnePlus12
+          echo "查看git-repo目录下的文件"
           ls -al git-repo
+          echo "查看kernel_patches目录下的文件"
           ls -al kernel_patches
+          echo "查看susfs4ksu目录下的文件"
           ls -al susfs4ksu
-          cd ..
-          ls -al
+          echo "查看kernel_platform目录下的文件"
+          ls -al /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform
       - name: Create Bootimgs Folder and Copy Images
         run: |
           echo "Changing to configuration directory: $CONFIG"
