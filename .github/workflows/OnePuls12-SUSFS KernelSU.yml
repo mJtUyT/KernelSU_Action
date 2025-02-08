@@ -218,6 +218,7 @@ jobs:
           ls -al
           echo "查看android14-6.1的内容"
           cd android14-6.1
+          ls -al
         
       - name: Create Bootimgs Folder and Copy Images
         run: |
