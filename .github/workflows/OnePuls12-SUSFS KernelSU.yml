@@ -203,7 +203,7 @@ jobs:
           pwd
           ls -al
           ls -al AnyKernel3
-          ls -al OnePuls12
+          ls -al OnePlus12
           ls -al git-repo
           ls -al kernel_patches
           ls -al susfs4ksu
