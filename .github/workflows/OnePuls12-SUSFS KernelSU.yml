@@ -197,7 +197,12 @@ jobs:
               df -h
               sleep 10
           done
-   
+          
+      - name: 运行命令查看当前目录和文件
+        run: | 
+          echo "查看当前目录和文件"
+          pwd
+          ls -al
       - name: Create Bootimgs Folder and Copy Images
         run: |
           echo "Changing to configuration directory: $CONFIG"
