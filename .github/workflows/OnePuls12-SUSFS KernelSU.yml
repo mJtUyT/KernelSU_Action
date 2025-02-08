@@ -225,6 +225,9 @@ jobs:
           ls -al susfs4ksu
           echo "查看kernel_platform目录下的文件"
           ls -al /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform
+          echo "查看out目录下的文件"
+          cd /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out
+          ls -al
       - name: Create Bootimgs Folder and Copy Images
         run: |
           echo "Changing to configuration directory: $CONFIG"
