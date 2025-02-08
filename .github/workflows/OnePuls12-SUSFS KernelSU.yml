@@ -179,7 +179,7 @@ jobs:
       - name: 查看目录
         run : |
           echo "查看kernel_platform下的目录"
-          cd Oneplus12
+          cd OnePlus12
           cd kernel_platform
           ls -al
           
