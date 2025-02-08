@@ -203,6 +203,11 @@ jobs:
           echo "查看当前目录和文件"
           pwd
           ls -al
+          ls -al OnePuls12
+          ls -al AnyKernel3
+          ls -al git-repo
+          ls -al kernel-patches
+          ls -al susfs4ksu
       - name: Create Bootimgs Folder and Copy Images
         run: |
           echo "Changing to configuration directory: $CONFIG"
