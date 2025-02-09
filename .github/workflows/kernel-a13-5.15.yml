@@ -135,21 +135,7 @@ jobs:
           # 同步Repo并应用补丁
           $REPO --version
           $REPO --trace sync -c -j$(nproc --all) --no-tags --fail-fast
-
-      - name: 确定KernelSU的分支
-        if: ${{ inputs.kernelsu_variant == '官方' }}
-        run: |
-          if [[ "${{ inputs.kernelsu_branch }}" == "稳定" ]]; then
-            echo "BRANCH=-" >> $GITHUB_ENV
-          elif [[ "${{ inputs.kernelsu_branch }}" == "开发" ]]; then
-            echo "BRANCH=-s next" >> $GITHUB_ENV
-          elif [[ "${{ inputs.kernelsu_branch }}" == "其他" && -n "${{ inputs.kernelsu_branch_other }}" ]]; then
-            echo "BRANCH=-s ${{ inputs.kernelsu_branch_其他 }}" >> $GITHUB_ENV
-          else
-            echo "错误：未为'其他'提供自定义分支" >&2
-            exit 1
-          fi
-
+          
       - name: 添加KernelSU
         if: ${{ inputs.kernelsu_variant == '官方' }}
         run: |
