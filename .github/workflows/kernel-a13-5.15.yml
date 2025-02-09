@@ -329,7 +329,7 @@ jobs:
           # 删除check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
           
-      - name:运行sed命令进行修改
+      - name: 运行sed命令进行修改
         run: | 
           # 运行sed命令进行修改
           sed -i '$s|echo "\$res"|echo "android13-8-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
