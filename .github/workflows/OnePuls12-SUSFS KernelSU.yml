@@ -1,4 +1,4 @@
-name: Build OnePlus 12 SUSFS KernelSU
+name: Build OnePlus12 SUSFS KernelSU
 
 on:
   workflow_dispatch:
@@ -6,7 +6,6 @@ on:
 jobs:
   build-kernel-a14-6-1-kernelsu-susfs:
     runs-on: ubuntu-latest
-    timeout-minutes: 150 #将超时时间设置为150分钟
 
     steps:
       - name: Maximize build space
@@ -14,7 +13,7 @@ jobs:
         with:
           root-reserve-mb: 8192
           temp-reserve-mb: 2048
-          swap-size-mb: 20000
+          swap-size-mb: 8192
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -160,7 +159,7 @@ jobs:
           
           # Run sed commands for modifications
           sed -i 's/check_defconfig//' ./common/build.config.gki
-          sed -i '$s|echo "\$res"|echo "-android14-11-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "android14-11-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
@@ -175,18 +174,14 @@ jobs:
          
           # Run perl command to modify UTS_VERSION
           perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Sat Apr 20 04:20:00 UTC 2024"}' ./common/scripts/mkcompile_h
-
-      - name: 查看目录
-        run : |
-          echo "查看kernel_platform下的目录"
-          cd OnePlus12
-          cd kernel_platform
-          ls -al
-          echo "查看oplus/build目录下的文件"
-          cd oplus
-          cd build
-          ls -al
           
+      - name: 查看目录和文件
+        run: |
+          echo "查看当前目录"
+          pwd
+          echo "查看当前目录下的内容"
+          ls -al
+
       - name: Build the Kernel
         run: |
           echo "Changing to configuration directory: $CONFIG..."
@@ -194,42 +189,34 @@ jobs:
           
           echo "Building the kernel..."
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
-          /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki
+          #git config --global user.email "bins4us@hotmail.com"
+          #git config --global user.name "TheWildJames"
+          #git add *
+          #git commit -s -a -m "getting rid of -dirty"
+          ./kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki &
+          CMD_PID=$!
+          while kill -0 $CMD_PID 2>/dev/null; do
+              echo "Memory Usage:"
+              free -h
+              echo "Disk Usage:"
+              df -h
+              sleep 10
+          done
           
-      - name: 运行命令查看当前目录和文件
-        run: | 
-          echo "查看当前目录和文件"
-          pwd
-          ls -al
-          echo "查看AnyKernel3目录下文件"
-          ls -al AnyKernel3
-          echo "查看OnePlus12目录下的文件"
-          ls -al OnePlus12
-          echo "查看git-repo目录下的文件"
-          ls -al git-repo
-          echo "查看kernel_patches目录下的文件"
-          ls -al kernel_patches
-          echo "查看susfs4ksu目录下的文件"
-          ls -al susfs4ksu
-          echo "查看kernel_platform目录下的文件"
-          ls -al /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform
-          echo "查看out目录下的文件"
-          cd /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out
-          ls -al
-          echo "查看android14-6.1的内容"
-          cd android14-6.1
-          ls -al
-          echo "查看msm-kernel目录下的内容"
-          cd msm-kernel
-          ls -al
-        
+      - name: 查看目录和文件
+        run: |
+        echo "查看当前所在目录"
+        pwd
+        echo "查看当前目录下的内容"
+        ls -al
+   
       - name: Create Bootimgs Folder and Copy Images
         run: |
-          echo "Changing to configuration directory: $CONFIG"
+          echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG"
           
           echo "Copying Image"
-          cp /home/runner/work/build-KernelSU/build-KernelSU/OnePlus12/kernel_platform/out/android14-6.1/msm-kernel/Image /home/runner/work/build-KernelSU/build-KernelSU/AnyKernel3/Image
+          cp ./out/dist/Image ../AnyKernel3/Image
           
       - name: Create ZIP Files for Different Formats
         run: |
