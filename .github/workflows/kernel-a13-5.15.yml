@@ -1,6 +1,7 @@
 name: Build KernelSU SUSFS 5.15 GKI
+
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       make_release:
         description: '是否创建发行版?'
