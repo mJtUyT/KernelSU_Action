@@ -76,7 +76,6 @@ jobs:
           echo "Adding KernelSU..."
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
           cd ./KernelSU-Next/kernel
-          sed -i 's/ccflags-y += -DKSU_VERSION=16/ccflags-y += -DKSU_VERSION=12000/' ./Makefile
 
       - name: Apply SUSFS Patches
         run: |
@@ -175,8 +174,8 @@ jobs:
           
           echo "Building the kernel..."
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
-          ./kernel_platform/oplus/build/oplus_build_kernel.sh waipio gki
-          ./kernel_platform/oplus/build/oplus_rebuild_img.sh waipio gki
+          LTO=thin ./kernel_platform/oplus/build/oplus_build_kernel.sh waipio gki
+          LTO=thin ./kernel_platform/oplus/build/oplus_rebuild_img.sh waipio gki
 
       - name: Create Bootimgs Folder and Copy Images
         run: |
@@ -191,7 +190,7 @@ jobs:
           echo "Creating zip files for all formats..."
           cd ./AnyKernel3
           
-          ZIP_NAME="Anykernel3-OnePuls Ace2-KernelSU-SUSFS.zip"
+          ZIP_NAME="Anykernel3-OnePulsAce2-KernelSU-SUSFS.zip"
           echo "Creating zip file $ZIP_NAME..."
           zip -r "../$ZIP_NAME" ./*
           
