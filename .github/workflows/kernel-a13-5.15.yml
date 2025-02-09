@@ -1,70 +1,6 @@
 name: Build KernelSU SUSFS 5.15 GKI
-
 on:
   workflow_dispatch:
-    inputs:
-      make_release:
-        description: '是否创建发行版?'
-        required: true
-        type: boolean
-        default: false
-      runner:
-        description: "选择运行器"
-        required: true
-        type: choice
-        options:
-          - ubuntu-22.04
-          - ubuntu-22.04-本地
-        default: ubuntu-22.04
-      lto_type:
-        description: "选择LTO类型 (运行器不为本地时选择full会停止运行)"
-        required: true
-        type: choice
-        options:
-          - full
-          - thin
-          - none
-        default: thin
-      kernelsu_variant:
-        description: "选择KernelSU"
-        required: true
-        type: choice
-        options:
-          - 官方
-          - Next
-          - Placeholder
-        default: Official
-      kernelsu_branch:
-        description: "选择KernelSU分支"
-        required: true
-        type: choice
-        options:
-          - 稳定
-          - 开发
-          - 其他
-        default: 稳定
-      kernelsu_branch_other:
-        description: "如果选择了其他，请指定自定义分支"
-        required: false
-        type: string 
-        default: ""  
-    inputs:
-      runner:
-        required: true
-        type: string
-      lto_type:
-        required: true
-        type: string
-      kernelsu_variant:
-        required: true
-        type: string
-      kernelsu_branch:
-        required: true
-        type: string
-      kernelsu_branch_other:
-        required: false
-        type: string
-  
 jobs:
   build-kernel-a13-5-15-kernelsu-susfs:
     strategy:
@@ -214,20 +150,6 @@ jobs:
             exit 1
           fi
 
-      - name: 确定KernelSU-Next的分支
-        if: ${{ inputs.kernelsu_variant == 'Next' }}
-        run: |
-          if [[ "${{ inputs.kernelsu_branch }}" == "稳定" ]]; then
-            echo "BRANCH=-" >> $GITHUB_ENV
-          elif [[ "${{ inputs.kernelsu_branch }}" == "开发" ]]; then
-            echo "BRANCH=-s next" >> $GITHUB_ENV
-          elif [[ "${{ inputs.kernelsu_branch }}" == "其他" && -n "${{ inputs.kernelsu_branch_other }}" ]]; then
-            echo "BRANCH=-s ${{ inputs.kernelsu_branch_其他 }}" >> $GITHUB_ENV
-          else
-            echo "错误：未为'其他'提供自定义分支" >&2
-            exit 1
-          fi
-
       - name: 添加KernelSU
         if: ${{ inputs.kernelsu_variant == '官方' }}
         run: |
@@ -236,15 +158,6 @@ jobs:
           
           echo "正在添加KernelSU..."
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash $BRANCH
-
-      - name: 添加KernelSU
-        if: ${{ inputs.kernelsu_variant == 'Next' }}
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG"
-          
-          echo "正在添加KernelSU..."
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
 
       - name: 为KernelSU应用SUSFS补丁
         if: ${{ inputs.kernelsu_variant == '官方' }}
@@ -273,18 +186,6 @@ jobs:
         run: |
           echo "正在更改配置目录: $CONFIG..."
           cd "$CONFIG"
-          
-          echo "正在为KernelSU-Next应用SUSFS补丁..."
-          
-          # 复制SUSFS补丁
-          cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch ./common/
-          cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
-          cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-
-          cd ./KernelSU-Next
-          echo "正在为KernelSU-Next应用SUSFS补丁..."
-          cp ../../kernel_patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch ./
-          patch -p1 --forward < KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch || true
           
           # 改为公共目录并应用SUSFS补丁
           cd ../common
