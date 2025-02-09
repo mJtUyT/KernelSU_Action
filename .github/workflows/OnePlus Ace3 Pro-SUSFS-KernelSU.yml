@@ -1,7 +1,7 @@
 name: Build OnePlus Ace 3 Pro SUSFS KernelSU
 
 on:
-  workflow_dispatch:  # This allows this workflow to be called from another workflow
+  workflow_dispatch: 
   
 jobs:
   build-kernel-a14-6-1-kernelsu-susfs:
@@ -159,7 +159,7 @@ jobs:
           
           # Run sed commands for modifications
           sed -i 's/check_defconfig//' ./common/build.config.gki
-          sed -i '$s|echo "\$res"|echo "\$res-mJtUyT"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "android14-11-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
@@ -179,11 +179,7 @@ jobs:
           
           echo "Building the kernel..."
           rm -rf ./kernel_platform/common/android/abi_gki_protected_exports_*
-          #git config --global user.email "bins4us@hotmail.com"
-          #git config --global user.name "TheWildJames"
-          #git add *
-          #git commit -s -a -m "getting rid of -dirty"
-          ./kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki
+          LTO=thin ./kernel_platform/oplus/build/oplus_build_kernel.sh pineapple gki
 
       - name: Create Bootimgs Folder and Copy Images
         run: |
