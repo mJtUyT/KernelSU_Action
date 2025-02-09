@@ -24,7 +24,7 @@ jobs:
             os_patch_level: "2024-11"
           - sub_level: "X"
             os_patch_level: "lts"
-
+    runs-on: ubuntu-latest
     steps:
       - name: 最大化构建空间
         if: ${{ inputs.runner == 'ubuntu-22.04' }}
