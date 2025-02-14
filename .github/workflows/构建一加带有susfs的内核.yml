@@ -1,4 +1,4 @@
-name: Build KernelSU Next LC
+name: 构建一加带有susfs的内核
 on:
   workflow_dispatch:
     inputs:
@@ -126,6 +126,13 @@ jobs:
            
            # cp ../kernel_patches/selinux.c_fix.patch ./
            # patch -p1 -F 3 < selinux.c_fix.patch
+
+      - name: 使用sed命令进行修改
+        run: |
+         cd kernel_workspace 
+         cd kernel_platform
+         sed -i '$s|echo "\$res"|echo "android14-6.1-susfs4ksu-mJtUyT"|' ./common/scripts/setlocalversion
+        
            
       - name: Build kernel
         run: |
