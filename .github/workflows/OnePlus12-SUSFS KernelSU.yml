@@ -1,11 +1,12 @@
-name: Build OnePlus12 SUSFS KernelSU
+name: Build OnePlus 12 SUSFS KernelSU
 
 on:
-  workflow_dispatch:  # This allows this workflow to be called from another workflow
+  workflow_dispatch:
   
 jobs:
   build-kernel-a14-6-1-kernelsu-susfs:
     runs-on: ubuntu-latest
+    timeout-minutes: 150 #将超时时间设置为150分钟
 
     steps:
       - name: Maximize build space
@@ -13,7 +14,7 @@ jobs:
         with:
           root-reserve-mb: 8192
           temp-reserve-mb: 2048
-          swap-size-mb: 8192
+          swap-size-mb: 20000
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -22,7 +23,7 @@ jobs:
       - name: Set CONFIG Environment Variable
         run: |
           # Set CONFIG dynamically based on matrix values
-          CONFIG="OnePlus12"
+          CONFIG="op12"
           
           # Set CONFIG as an environment variable for future steps
           echo "CONFIG=$CONFIG" >> $GITHUB_ENV
@@ -84,50 +85,36 @@ jobs:
           cd "$CONFIG/kernel_platform"
           
           echo "Applying SUSFS patches..."
-          
+
           # Copy SUSFS patches
-          cp ../../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next/
-          cp ../../susfs4ksu/kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ./common/
-          cp ../../susfs4ksu/kernel_patches/fs/* ./common/fs/
-          cp ../../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+          cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ matrix.android_version }}-${{ matrix.kernel_version }}.patch ./common/
+          cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
+          cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
 
           cd ./KernelSU-Next
-          
-          # Apply SUSFS patch for KernelSU
-          patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
-          
+          echo "Applying next SUSFS patches..."
+          cp ../../kernel_patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch ./
+          patch -p1 --forward < KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch || true
+
           # Change to common directory and apply SUSFS patch
           cd ../common
-          patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch || true
+          patch -p1 < 50_add_susfs_in_gki-${{ matrix.android_version }}-${{ matrix.kernel_version }}.patch || true
           
-      - name: Apply Next-SUSFS Patches
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG/kernel_platform"
-          
-          echo "Applying next SUSFS patches..."
-          cp ../../kernel_patches/apk_sign.c_fix.patch ./
-          patch -p1 -F 3 < apk_sign.c_fix.patch
-          cp ../../kernel_patches/core_hook.c_fix.patch ./
-          patch -p1 --fuzz=3 < core_hook.c_fix.patch
-          cp ../../kernel_patches/selinux.c_fix.patch ./
-          patch -p1 -F 3 < selinux.c_fix.patch
-
       - name: Apply Hide Stuff Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG/kernel_platform/common"
+          cd "$CONFIG/common"
           # Apply additional patch
-          cp ../../../kernel_patches/69_hide_stuff.patch ./
+          cp ../../kernel_patches/69_hide_stuff.patch ./
           patch -p1 -F 3 < 69_hide_stuff.patch
 
       - name: Add SUSFS Configuration Settings
         run: |
           echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG/kernel_platform"
-          
+          cd "$CONFIG"
+
           echo "Adding configuration settings to gki_defconfig..."
-          
+
           # Add SUSFS configuration settings
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -146,9 +133,12 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_SUS_SU=y" >> ./common/arch/arm64/configs/gki_defconfig
-          
+
           # Add additional tmpfs config setting
           echo "CONFIG_TMPFS_XATTR=y" >> ./common/arch/arm64/configs/gki_defconfig
+
+          # Remove check_defconfig
+          sed -i 's/check_defconfig//' ./common/build.config.gki
 
       - name: Run sed and perl Commands
         run: |
@@ -159,7 +149,7 @@ jobs:
           
           # Run sed commands for modifications
           sed -i 's/check_defconfig//' ./common/build.config.gki
-          sed -i '$s|echo "\$res"|echo "android14-11-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "-android14-11-SUSFS-mJtUyT"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
 
@@ -174,13 +164,6 @@ jobs:
          
           # Run perl command to modify UTS_VERSION
           perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Sat Apr 20 04:20:00 UTC 2024"}' ./common/scripts/mkcompile_h
-          
-      - name: 查看目录和内容
-        run: |
-          echo "查看当前目录"
-          pwd
-          echo "查看当前目录下的内容"
-          ls -al
 
       - name: Build the Kernel
         run: |
@@ -202,13 +185,6 @@ jobs:
               df -h
               sleep 10
           done
-          
-      - name: 查看目录喝内容
-        run: | 
-          echo "查看当前所在目录"
-          pwd
-          echo "查看当前目录下的内容"
-          ls -al
    
       - name: Create Bootimgs Folder and Copy Images
         run: |
@@ -223,7 +199,7 @@ jobs:
           echo "Creating zip files for all formats..."
           cd ./AnyKernel3
           
-          ZIP_NAME="Anykernel3-OnePlus12-KernelSU-SUSFS.zip"
+          ZIP_NAME="Anykernel3-OnePuls12-KernelSU-SUSFS.zip"
           echo "Creating zip file $ZIP_NAME..."
           zip -r "../$ZIP_NAME" ./*
           
