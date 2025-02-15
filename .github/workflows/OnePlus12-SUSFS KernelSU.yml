@@ -98,7 +98,7 @@ jobs:
           cp ../../susfs4ksu/kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ./common/
           cp ../../susfs4ksu/kernel_patches/fs/* ./common/fs/
           cp ../../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-          cp ../../kernel_patches ./op12/
+          cp -r ../../kernel_patches ./op12/
 
           cd ./KernelSU-Next
           echo "Applying next SUSFS patches..."
