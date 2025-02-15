@@ -82,7 +82,10 @@ jobs:
       - name: Apply SUSFS Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
+          pwd
+          ls -al
           cd "$CONFIG/kernel_platform"
+          ls -al
           
           echo "Applying SUSFS patches..."
 
