@@ -84,19 +84,20 @@ jobs:
           echo "Changing to configuration directory: $CONFIG..."
           pwd
           ls -al
+          ls -al kernel_patches
           ls -al susfs4ksu
-          cd "$CONFIG
+          cd "$CONFIG"
           ls -al
-          cd kernel_platform"
-          ls -al
+          cd kernel_platform
+          ls -al kernel_platform
           
           echo "Applying SUSFS patches..."
 
           # Copy SUSFS patches
-          cp /home/runner/work/build-KernelSU/build-KernelSU/susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next/
-          cp /home/runner/work/build-KernelSU/build-KernelSU/susfs4ksu/kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ./common/
-          cp /home/runner/work/build-KernelSU/build-KernelSU/susfs4ksu/kernel_patches/fs/* ./common/fs/
-          cp /home/runner/work/build-KernelSU/build-KernelSU/susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+          cp ../../kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next/
+          cp ../../kernel_patches/50_add_susfs_in_gki-android14-6.1.patch ./common/
+          cp ../../kernel_patches/fs/* ./common/fs/
+          cp ../../kernel_patches/include/linux/* ./common/include/linux/
 
           cd ./KernelSU-Next
           echo "Applying next SUSFS patches..."
