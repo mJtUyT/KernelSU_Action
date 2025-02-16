@@ -103,7 +103,7 @@ jobs:
 
           cd ./KernelSU-Next
           echo "Applying next SUSFS patches..."
-          ls -al ../../kernel_patches
+          ls -al ../../kernel_patches || true
           cp ../../../kernel_patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch ./
           patch -p1 --forward < KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch || true
 
