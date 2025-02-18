@@ -101,11 +101,11 @@ jobs:
           cp -r ../../kernel_patches ./op12/
           ls -al op12
 
-          cd ./KernelSU
-          echo "Applying ksu SUSFS patches..."
+          cd ./KernelSU-Next
+          echo "Applying next SUSFS patches..."
           ls -al ../../../kernel_patches || true
-          cp ../../../kernel_patches/KernelSU-Implement-SUSFS-v1.5.5-Universal.patch ./
-          patch -p1 --forward < KernelSU-Implement-SUSFS-v1.5.5-Universal.patch
+          cp ../../../kernel_patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch ./
+          patch -p1 --forward < KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch
 
           pwd
           ls -al
