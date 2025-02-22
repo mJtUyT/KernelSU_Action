@@ -81,12 +81,12 @@ jobs:
          sed -i 's/ -dirty//g' kernel_platform/common/scripts/setlocalversion
          sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
 
-      - name: Set up KernelSU
+      - name: Set up MKSU
         if: github.event.inputs.KSU_ENABLED == 'true'
         run: |
          cd kernel_workspace/kernel_platform
          echo "Adding KernelSU..."
-         curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash $BRANCH
+         curl -LSs "https://raw.githubusercontent.com/5ec1cff/KernelSU/main/kernel/setup.sh" | bash -s main
          cd KernelSU
          
       - name: Set up susfs
