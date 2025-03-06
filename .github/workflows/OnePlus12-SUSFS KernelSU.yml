@@ -42,10 +42,6 @@ jobs:
         run: |
           echo "Cloning AnyKernel3 and other dependencies..."
     
-          # Define the branch names using the matrix values
-          ANYKERNEL_BRANCH="android14-6.1"
-          SUSFS_BRANCH="gki-android14-6.1"
-
           # Debug print the branches
           echo "Using branch for AnyKernel3: $ANYKERNEL_BRANCH"
           echo "Using branch for SUSFS: $SUSFS_BRANCH"
@@ -82,14 +78,6 @@ jobs:
       - name: Apply SUSFS Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
-          pwd
-          ls -al
-          ls -al kernel_patches
-          ls -al susfs4ksu
-          cd "$CONFIG"
-          ls -al
-          cd kernel_platform
-          ls -al
           
           echo "Applying SUSFS patches..."
 
@@ -102,58 +90,16 @@ jobs:
           ls -al op12
 
           cd ./KernelSU-Next
-          echo "Applying next SUSFS patches..."
-          ls -al ../../../kernel_patches || true
-          cp ../../../kernel_patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch ./
-          patch -p1 --forward < KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch
-
-          pwd
-          ls -al
-
-          # Change to common directory and apply SUSFS patch
-          cd ../common
-          patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch
-          
-      - name: Apply Hide Stuff Patches
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG/kernel_platform/common"
-          # Apply additional patch
-          cp ../../../kernel_patches/69_hide_stuff.patch ./
-          patch -p1 -F 3 < 69_hide_stuff.patch
-
-      - name: Add SUSFS Configuration Settings
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG/kernel_platform/"
-
-          echo "Adding configuration settings to gki_defconfig..."
-
-          # Add SUSFS configuration settings
-          echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_SU=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # Add additional tmpfs config setting
-          echo "CONFIG_TMPFS_XATTR=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # Remove check_defconfig
-          sed -i 's/check_defconfig//' ./common/build.config.gki
-
+           patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
+           patch -p1 --forward < mksu_susfs.patch || true
+           cd ../common
+           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+           cp ../../kernel_patches4mksu/69_hide_stuff.patch ./
+           patch -p1 -F 3 < 69_hide_stuff.patch
+           git add -A && git commit -a -m "BUILD Kernel"
+           cd ..
+           cd ./msm-kernel && git add -A && git commit -a -m "BUILD Kernel"
+           
       - name: Run sed and perl Commands
         run: |
           echo "Changing to configuration directory: $CONFIG..."
