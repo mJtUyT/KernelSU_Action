@@ -9,7 +9,7 @@ on:
       FEIL:
         description: "配置文件"
         required: true
-        default: 'oneplus12_v'
+        default: 'oneplus_ace5'
       CPUD:
         description: "处理器代号"
         required: true
@@ -99,7 +99,9 @@ jobs:
       - name: Build kernel
         run: |
          cd kernel_workspace
-         ./kernel_platform/oplus/build/oplus_build_kernel.sh ${{ github.event.inputs.CPUD }} gki
+         cd kernel_platform
+         sed -i '$s|echo "\$res"|echo "-android14-11-susfs4ksu-mJtUyT"|' ./common/scripts/setlocalversion
+         ./oplus/build/oplus_build_kernel.sh ${{ github.event.inputs.CPUD }} gki
          
       - name: Make AnyKernel3
         run: |
