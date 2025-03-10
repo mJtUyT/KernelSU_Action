@@ -9,7 +9,7 @@ on:
       FEIL:
         description: "配置文件"
         required: true
-        default: 'oneplus_ace5'
+        default: 'oneplus12_v'
       CPUD:
         description: "处理器代号"
         required: true
@@ -64,7 +64,6 @@ jobs:
          sed -i 's/ -dirty//g' kernel_platform/common/scripts/setlocalversion
          sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
          sed -i 's/ -dirty//g' kernel_platform/external/dtc/scripts/setlocalversion
-         sed -i '$s|echo "\$res"|echo "-android14-11-susfs4ksu-mJtUyT"|' kernel_platform/common/scripts/setlocalversion
   
       - name: Set up KernelSU Next
         run: |
